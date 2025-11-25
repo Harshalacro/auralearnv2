@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>aura_learn — AR Learning</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* CLEAN, SMOOTH GALAXY BACKGROUND */
+    body {
+      margin: 0;
+      font-family: Inter, sans-serif;
+      background: linear-gradient(160deg,
+        #140032 0%,
+        #1a0050 25%,
+        #22006a 40%,
+        #2a0080 55%,
+        #3a00a4 75%,
+        #5a00d6 100%
+      );
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+
+    /* FIXED STAR PARTICLES (no checkerboard patterns) */
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 100%;
+      opacity: 0.6;
+      animation: drift linear infinite;
+    }
+
+    @keyframes drift {
+      from { transform: translateY(0px); }
+      to   { transform: translateY(2000px); }
+    }
+
+    /* aura_learn glow */
+    .aura-title {
+      text-shadow:
+        0 0 14px rgba(255, 100, 255, 0.4),
+        0 0 40px rgba(120, 40, 255, 0.3);
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PERFECT STAR FIELD LAYER -->
+  <div class="stars" id="starContainer"></div>
+
+  <!-- LANDING SECTION -->
+  <section id="landing" class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative z-20">
+
+    <h1 class="aura-title text-white font-extrabold text-6xl tracking-wide">
+      aura_learn
+    </h1>
+
+    <p class="text-gray-200 mt-5 max-w-lg opacity-90">
+      Learn through immersive AR experiences. Tap to begin.
+    </p>
+
+    <!-- ENTER BUTTON replaces scroll (as requested) -->
+    <button onclick="goSubjects()"
+      class="mt-10 px-8 py-3 bg-white/90 text-gray-900 rounded-xl font-semibold shadow-lg hover:bg-white transition">
+      Explore Subjects
+    </button>
+
+  </section>
+
+  <!--

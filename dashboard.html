@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - AuraLearn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: white;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav
+        class="flex justify-between items-center px-8 py-6 border-b border-white/10 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl font-bold">
+                A</div>
+            <span
+                class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">AuraLearn</span>
+        </div>
+        <div class="flex items-center gap-6">
+            <span id="userGreeting" class="text-gray-300">Welcome, Student</span>
+            <button onclick="logout()"
+                class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium">Sign
+                Out</button>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+        <!-- Welcome Section -->
+        <header class="mb-12">
+            <h1 class="text-4xl font-bold mb-4">Your Learning Journey 🚀</h1>
+            <p class="text-gray-400 text-lg">Track your progress and discover new topics.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Progress Overview -->
+            <div class="lg:col-span-2 space-y-8">
+                <div class="glass-panel p-8">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <span class="text-2xl">📊</span> Subject Progress
+                    </h2>
+
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium text-indigo-300">Science</span>
+                                <span class="text-indigo-300">65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-indigo-500 to-purple-500"
+                                    style="width: 0%" data-width="65%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">3/5 Modules Completed • Next: Human Liver</p>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium text-emerald-300">Geography</span>
+                                <span class="text-emerald-300">30%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-emerald-400 to-teal-500"
+                                    style="width: 0%" data-width="30%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">1/4 Modules Completed • Next: Volcanoes</p>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium text-amber-300">Mathematics</span>
+                                <span class="text-amber-300">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-amber-400 to-orange-500"
+                                    style="width: 0%" data-width="5%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Coming Soon</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="glass-panel p-8">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <span class="text-2xl">🕒</span> Recent Activity
+                    </h2>
+                    <div class="space-y-4">
+                        <a href="science.html"
+                            class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
+                            <div
+                                class="w-12 h-12 rounded-lg bg-indigo-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                ❤️</div>
+                            <div>
+                                <h3 class="font-semibold">Human Heart</h3>
+                                <p class="text-sm text-gray-400">Science • Viewed 2 hours ago</p>
+                            </div>
+                            <svg class="ml-auto w-5 h-5 text-gray-500 group-hover:text-white transition-colors"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+
+                        <a href="geography.html"
+                            class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
+                            <div
+                                class="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                🌍</div>
+                            <div>
+                                <h3 class="font-semibold">Earth Structure</h3>
+                                <p class="text-sm text-gray-400">Geography • Viewed yesterday</p>
+                            </div>
+                            <svg class="ml-auto w-5 h-5 text-gray-500 group-hover:text-white transition-colors"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-8">
+                <!-- AI Recommendations -->
+                <div class="glass-panel p-8 bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border-indigo-500/30">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="text-xl">✨</span> Recommended
+                    </h2>
+                    <p class="text-sm text-gray-300 mb-6">Based on your interest in Biology, check out:</p>
+
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl bg-black/20 border border-white/5">
+                            <h3 class="font-semibold text-indigo-300 mb-1">DNA Structure</h3>
+                            <p class="text-xs text-gray-400 mb-3">Learn about the building blocks of life.</p>
+                            <a href="science.html"
+                                class="text-xs font-bold text-white bg-indigo-600 px-3 py-1.5 rounded-lg hover:bg-indigo-500 transition-colors inline-block">Start
+                                Module</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="glass-panel p-8">
+                    <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider mb-4">Your Stats</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-4 rounded-xl bg-white/5">
+                            <div class="text-2xl font-bold text-white mb-1">12</div>
+                            <div class="text-xs text-gray-500">Modules</div>
+                        </div>
+                        <div class="text-center p-4 rounded-xl bg-white/5">
+                            <div class="text-2xl font-bold text-white mb-1">4.5h</div>
+                            <div class="text-xs text-gray-500">Learning Time</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Check auth
+        const user = JSON.parse(localStorage.getItem('auraUser'));
+        if (!user) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('userGreeting').textContent = `Welcome, ${user.name.split(' ')[0]}`;
+        }
+
+        function logout() {
+            localStorage.removeItem('auraUser');
+            window.location.href = 'index.html';
+        }
+
+        // Animate progress bars
+        setTimeout(() => {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                bar.style.width = bar.dataset.width;
+            });
+        }, 300);
+    </script>
+</body>
+
+</html>

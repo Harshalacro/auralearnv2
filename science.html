@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AuraLearn - Science AR Models</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- model-viewer for AR -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    .nav-bar {
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(-4px);
+    }
+
+    .nav-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 3rem 2rem 2rem;
+      animation: fadeInDown 0.6s ease-out;
+    }
+
+    .title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+    }
+
+    .divider {
+      height: 3px;
+      width: 80px;
+      background: white;
+      margin: 1.5rem auto;
+      border-radius: 2px;
+    }
+
+    /* AR Cards */
+    .models-container {
+      max-width: 1400px;
+      margin: 2rem auto 4rem;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .ar-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInUp 0.6s ease-out both;
+    }
+
+    .ar-card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .ar-card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .ar-card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .ar-card:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    .ar-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-preview {
+      height: 220px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ar-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(251, 191, 36, 0.9);
+      color: #1f2937;
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .card-content {
+      padding: 2rem;
+    }
+
+    .card-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+    }
+
+    .card-description {
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+
+    .card-button {
+      background: white;
+      color: #667eea;
+      border: none;
+      padding: 0.9rem 1.5rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .card-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* QR Modal */
+    .modal-bg {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1f2937;
+    }
+
+    .close-btn {
+      background: #f3f4f6;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: #e5e7eb;
+      transform: rotate(90deg);
+    }
+
+    .qr-image {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto;
+      display: block;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-text {
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+    }
+
+    .divider {
+      height: 3px;
+      width: 80px;
+      background: white;
+      margin: 1.5rem auto;
+      border-radius: 2px;
+    }
+
+    /* AR Cards */
+    .models-container {
+      max-width: 1400px;
+      margin: 2rem auto 4rem;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .ar-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInUp 0.6s ease-out both;
+    }
+
+    .ar-card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .ar-card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .ar-card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .ar-card:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    .ar-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-preview {
+      height: 220px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ar-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(251, 191, 36, 0.9);
+      color: #1f2937;
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .card-content {
+      padding: 2rem;
+    }
+
+    .card-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+    }
+
+    .card-description {
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+
+    .card-button {
+      background: white;
+      color: #667eea;
+      border: none;
+      padding: 0.9rem 1.5rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .card-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* QR Modal */
+    .modal-bg {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1f2937;
+    }
+
+    .close-btn {
+      background: #f3f4f6;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: #e5e7eb;
+      transform: rotate(90deg);
+    }
+
+    .qr-image {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto;
+      display: block;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-text {
+      text-align: center;
+      color: #6b7280;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Hide model-viewer until needed */
+    model-viewer {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .models-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <div class="nav-bar">
+    <a href="subjects.html" class="back-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      <span>Back to Subjects</span>
+    </a>
+    <div class="nav-title">🔬 Science</div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <h1 class="title">
+      <span>Science AR Models</span>
+    </h1>
+    <div class="divider"></div>
+    <p class="subtitle">Tap on any model to explore it in augmented reality</p>
+  </div>
+
+  <!-- AR Model Cards -->
+  <div class="models-container">
+
+    <!-- Human Heart Model -->
+    <div class="ar-card" onclick="openAR(1, 'Human Heart')">
+      <div class="card-preview"
+        style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(255, 69, 96, 0.2)), url('assets/images/heart.png'); background-size: cover; background-position: center;">
+
+        <div class="ar-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+          <span>AR Ready</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <h2 class="card-title">Human Heart</h2>
+        <p class="card-description">
+          Explore the human heart in 3D - see chambers, valves, and blood flow in stunning detail
+        </p>
+        <button class="card-button">
+          <span>View in AR</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 19l7-7 3 3-7 7-3-3z" />
+            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+            <path d="M2 2l7.586 7.586" />
+          </svg>
+        </button>
+      </div>
+      <model-viewer id="mv1" src="assets/models/placeholder.glb" ar camera-controls
+        ar-modes="webxr scene-viewer quick-look"></model-viewer>
+    </div>
+
+    <!-- DNA Molecule Model -->
+    <div class="ar-card" onclick="openAR(2, 'DNA Molecule')">
+      <div class="card-preview"
+        style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.2)), url('assets/images/dna.png'); background-size: cover; background-position: center;">
+
+        <div class="ar-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+          <span>AR Ready</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <h2 class="card-title">DNA Molecule</h2>
+        <p class="card-description">
+          Discover the double helix structure of DNA with base pairs and molecular bonds visualized
+        </p>
+        <button class="card-button">
+          <span>View in AR</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 19l7-7 3 3-7 7-3-3z" />
+            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+            <path d="M2 2l7.586 7.586" />
+          </svg>
+        </button>
+      </div>
+      <model-viewer id="mv2" src="assets/models/placeholder.glb" ar camera-controls
+        ar-modes="webxr scene-viewer quick-look"></model-viewer>
+    </div>
+
+    <!-- Solar System Model -->
+    <div class="ar-card" onclick="openAR(3, 'Solar System')">
+      <div class="card-preview"
+        style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.2)), url('assets/images/solar_system.png'); background-size: cover; background-position: center;">
+
+        <div class="ar-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+          <span>AR Ready</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <h2 class="card-title">Solar System</h2>
+        <p class="card-description">
+          Navigate through our solar system with all planets orbiting around the sun
+        </p>
+        <button class="card-button">
+          <span>View in AR</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 19l7-7 3 3-7 7-3-3z" />
+            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+            <path d="M2 2l7.586 7.586" />
+          </svg>
+        </button>
+      </div>
+      <model-viewer id="mv3" src="assets/models/placeholder.glb" ar camera-controls
+        ar-modes="webxr scene-viewer quick-look"></model-viewer>
+    </div>
+
+    <!-- Atom Model -->
+    <div class="ar-card" onclick="openAR(4, 'Atom Structure')">
+      <div class="card-preview"
+        style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(251, 191, 36, 0.2)), url('assets/images/atom.png'); background-size: cover; background-position: center;">
+
+        <div class="ar-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+          <span>AR Ready</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <h2 class="card-title">Atom Structure</h2>
+        <p class="card-description">
+          See electrons orbiting around the nucleus with protons and neutrons
+        </p>
+        <button class="card-button">
+          <span>View in AR</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 19l7-7 3 3-7 7-3-3z" />
+            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+            <path d="M2 2l7.586 7.586" />
+          </svg>
+        </button>
+      </div>
+      <model-viewer id="mv4" src="assets/models/placeholder.glb" ar camera-controls
+        ar-modes="webxr scene-viewer quick-look"></model-viewer>
+    </div>
+
+    <!-- Human Liver Model -->
+    <div class="ar-card" onclick="openAR(5, 'Human Liver')">
+      <div class="card-preview"
+        style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.2)), url('assets/images/liver.png'); background-size: cover; background-position: center;">
+
+        <div class="ar-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+          <span>AR Ready</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <h2 class="card-title">Human Liver</h2>
+        <p class="card-description">
+          Explore the anatomy of the liver, including lobes, gallbladder, and blood vessels
+        </p>
+        <button class="card-button">
+          <span>View in AR</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 19l7-7 3 3-7 7-3-3z" />
+            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+            <path d="M2 2l7.586 7.586" />
+          </svg>
+        </button>
+      </div>
+      <model-viewer id="mv5" src="assets/models/placeholder.glb" ar camera-controls
+        ar-modes="webxr scene-viewer quick-look"></model-viewer>
+    </div>
+
+  </div>
+
+  <!-- QR Modal for Desktop -->
+  <div id="qrModal" class="fixed inset-0 hidden items-center justify-center modal-bg z-50">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Scan to View in AR</h3>
+        <button class="close-btn" onclick="closeQR()">×</button>
+      </div>
+      <img id="qrImage" src="assets/qrcodes/placeholder-qr.png" class="qr-image" alt="QR Code" />
+      <p class="modal-text">📱 Scan this QR code with your phone to view <strong id="modelName">the model</strong> in AR
+      </p>
+    </div>
+  </div>
+
+  <!-- Advanced Chatbot Widget -->
+  <script src="chatbot-widget.js" data-auto-init="false"></script>
+  <script>
+    // Initialize chatbot
+    const auraBot = new AuraLearnChatbot({
+      botName: 'ScienceBot',
+      primaryColor: '#667eea',
+      accentColor: '#764ba2',
+      position: 'bottom-right',
+      welcomeMessage: 'Hello! 👋 I\'m here to help you understand science concepts. Ask me about biology, physics, chemistry, or the AR models!',
+      placeholderText: 'Ask about science concepts...',
+      enableVoice: true
+    });
+
+    function isMobile() {
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+        || window.matchMedia("(pointer:coarse)").matches;
+    }
+
+    function openAR(modelNum, modelName) {
+      if (isMobile()) {
+        // Mobile → Open AR directly
+        const mv = document.getElementById("mv" + modelNum);
+
+        if (mv && mv.canActivateAR) {
+          mv.activateAR();
+        } else if (mv) {
+          // Fallback: try to enter AR mode
+          const arButton = mv.shadowRoot.querySelector('button[slot="ar-button"]');
+          if (arButton) {
+            arButton.click();
+          } else {
+            alert("AR not supported on this device. Please try on a phone with AR capability.");
+          }
+        }
+      } else {
+        // Desktop → Show QR modal
+        document.getElementById("modelName").textContent = modelName;
+        document.getElementById("qrModal").classList.remove("hidden");
+        document.getElementById("qrModal").classList.add("flex");
+
+        // In a real app, you'd load the specific QR code for this model
+        document.getElementById("qrImage").src = "assets/qrcodes/placeholder-qr.png";
+      }
+    }
+
+    function closeQR() {
+      const modal = document.getElementById("qrModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    // Close modal on background click
+    document.getElementById('qrModal').addEventListener('click', function (e) {
+      if (e.target === this) {
+        closeQR();
+      }
+    });
+  </script>
+</body>
+
+</html>
